@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#932 界面预览 · 4008f17</title>
+<style>:root{color-scheme:light dark;--bg:#f6f6f7;--fg:#1d1d1f;--muted:#6e6e73;--card:#fff;--line:#e5e5ea}
+@media (prefers-color-scheme:dark){:root{--bg:#111113;--fg:#f2f2f4;--muted:#9a9aa0;--card:#1c1c1f;--line:#2c2c30}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,"Segoe UI","PingFang SC","Noto Sans CJK SC",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:28px 16px 60px}h1{font-size:20px;margin:0 0 4px}.m{color:var(--muted);font-size:13px;margin:0 0 20px}
+video,img{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:var(--card)}figure{margin:0 0 28px}figcaption{color:var(--muted);font-size:13px;margin-top:8px}
+a{color:inherit}</style>
+<main><h1>#932 界面预览</h1><p class="m">commit 4008f17 · <a href="https://github.com/yetone/magpie/pull/932">回到 PR</a> · 网关密钥新增「账号」白名单（#905）：密钥的「模型」菜单在模型之后列出供应商的登录账号与密钥（账号显示当前登录者、备注里是套餐，密钥显示指纹），勾选后按 accounts-key 保存，徽标也会显示账号或「N 个账号」；路由页把被密钥排除的账号说成「不是该网关密钥可用的账号」。另有 en/zh/ja/de 新增文案。</p>
+<figure><video src="preview.mp4" controls autoplay muted playsinline poster="poster.png"></video><figcaption>红线是鼠标走过的轨迹，红色圆环是一次点击；底部文字是这一步在做什么。空格暂停，← → 逐段查看。</figcaption></figure>
+<figure><img src="01-gateway-page.png" alt="网关页：接入、模型列表与最近调用"><figcaption>网关页：密钥的模型菜单所在的位置 · 网关页：接入、模型列表与最近调用</figcaption></figure>
+<figure><img src="02-gateway-models.png" alt="网关页的模型列表：网关密钥的「模型」菜单里选的就是这些模型"><figcaption>网关页：密钥的模型菜单所在的位置 · 网关页的模型列表：网关密钥的「模型」菜单里选的就是这些模型</figcaption></figure>
+<figure><img src="03-routing-live.png" alt="路由页：最近一个请求是怎么路由的，这段说明里会写账号被密钥排除的原因"><figcaption>路由页：账号被密钥排除时会说什么 · 路由页：最近一个请求是怎么路由的，这段说明里会写账号被密钥排除的原因</figcaption></figure>
+<figure><img src="04-routing-accounts.png" alt="「账号与密钥」一栏：统计自这些请求的账号"><figcaption>路由页：账号被密钥排除时会说什么 · 「账号与密钥」一栏：统计自这些请求的账号</figcaption></figure>
+</main></html>

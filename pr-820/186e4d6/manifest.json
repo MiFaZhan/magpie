@@ -1,0 +1,77 @@
+{
+  "summary": "这个 diff 给界面加了两类保护：关闭有未保存改动的供应商/路由/资源库编辑器时先弹出应用内的「放弃修改」确认框；删除供应商、账号密钥、路由组、插件及其中间件选项、资源库条目等操作不再立即生效，而是先弹确认框（并统一了 .action-confirm 弹窗样式、对话框语义和焦点圈定）。此外导航项加上 aria-current，并在首屏之前由新的 layout.js/theme.js 应用模式、平台、主题与字号。",
+  "scenes": [
+    {
+      "title": "关闭有未保存改动的供应商编辑器",
+      "shots": [
+        {
+          "file": "01-providers-list.png",
+          "caption": "供应商页：沙盒里只有一个 DeepSeek",
+          "width": 2560
+        },
+        {
+          "file": "02-editor-opened.png",
+          "caption": "刚打开的编辑器，还没有改动",
+          "width": 2560
+        },
+        {
+          "file": "03-editor-edited.png",
+          "caption": "编辑器里的 ID 字段已被改动，尚未保存",
+          "width": 2560
+        },
+        {
+          "file": "04-discard-dialog-escape.png",
+          "caption": "按 Esc 关闭已改动的编辑器：确认框浮在编辑器之上",
+          "width": 1120
+        },
+        {
+          "file": "05-editor-after-cancel.png",
+          "caption": "「取消」之后，编辑器还开着，ID 字段里的改动还在",
+          "width": 2560
+        },
+        {
+          "file": "06-discard-dialog-cancel.png",
+          "caption": "点「取消」时的确认框",
+          "width": 1120
+        },
+        {
+          "file": "07-editor-closed.png",
+          "caption": "放弃改动之后关闭编辑器的供应商页",
+          "width": 2560
+        }
+      ]
+    },
+    {
+      "title": "移除供应商先确认",
+      "shots": [
+        {
+          "file": "08-editor-before-remove.png",
+          "caption": "编辑器底部：保存、取消与移除",
+          "width": 2560
+        },
+        {
+          "file": "09-editor-bar.png",
+          "caption": "编辑器底部一排：移除、再添加一个 DeepSeek、复制、取消、保存",
+          "width": 1296
+        },
+        {
+          "file": "10-editor-closed-clean.png",
+          "caption": "未改动的编辑器关闭后的供应商页",
+          "width": 2560
+        }
+      ]
+    }
+  ],
+  "video": "preview.mp4",
+  "poster": "poster.png",
+  "errors": [
+    "关闭有未保存改动的供应商编辑器 · type #modal input[type=\"url\"]: nothing visible matches #modal input[type=\"url\"] (0 in the page)",
+    "移除供应商先确认 · click #modal button: won't press \"移除\""
+  ],
+  "leak": false,
+  "skipped": null,
+  "mismatch": "",
+  "unseen": "沙盒里只有一个 DeepSeek 供应商、没有路由组、没有已安装插件、没有资源库条目，密钥也只有一个，所以这些地方的新确认框看不到数据：路由组的「移除 N 个」确认、路由组编辑器的放弃修改确认、插件「移除」与「清空选项」确认、资源库条目/项目移除确认、以及一次移除成百上千个密钥的确认。场景里只演示供应商编辑器这一处。",
+  "interactive": true,
+  "pages": 1
+}

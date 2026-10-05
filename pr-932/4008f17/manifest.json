@@ -1,0 +1,44 @@
+{
+  "summary": "网关密钥新增「账号」白名单（#905）：密钥的「模型」菜单在模型之后列出供应商的登录账号与密钥（账号显示当前登录者、备注里是套餐，密钥显示指纹），勾选后按 accounts-key 保存，徽标也会显示账号或「N 个账号」；路由页把被密钥排除的账号说成「不是该网关密钥可用的账号」。另有 en/zh/ja/de 新增文案。",
+  "scenes": [
+    {
+      "title": "网关页：密钥的模型菜单所在的位置",
+      "shots": [
+        {
+          "file": "01-gateway-page.png",
+          "caption": "网关页：接入、模型列表与最近调用",
+          "width": 2560
+        },
+        {
+          "file": "02-gateway-models.png",
+          "caption": "网关页的模型列表：网关密钥的「模型」菜单里选的就是这些模型",
+          "width": 2496
+        }
+      ]
+    },
+    {
+      "title": "路由页：账号被密钥排除时会说什么",
+      "shots": [
+        {
+          "file": "03-routing-live.png",
+          "caption": "路由页：最近一个请求是怎么路由的，这段说明里会写账号被密钥排除的原因",
+          "width": 2560
+        },
+        {
+          "file": "04-routing-accounts.png",
+          "caption": "「账号与密钥」一栏：统计自这些请求的账号",
+          "width": 1328
+        }
+      ]
+    }
+  ],
+  "video": "preview.mp4",
+  "poster": "poster.png",
+  "errors": [],
+  "leak": false,
+  "skipped": null,
+  "mismatch": "",
+  "unseen": "沙盒没有网关密钥（LAN 共享未开启，网关页没有密钥区），也没有订阅账号——只有 DeepSeek 一个 API 密钥。因此密钥「模型」菜单里排在各模型之后的账号/密钥条目、「N 个账号」徽标，以及路由页「被密钥排除」的说明，都没有数据可以出现；只能展示这些改动所在的位置。",
+  "interactive": false,
+  "pages": 2
+}

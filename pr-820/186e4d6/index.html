@@ -1,0 +1,21 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#820 界面预览 · 186e4d6</title>
+<style>:root{color-scheme:light dark;--bg:#f6f6f7;--fg:#1d1d1f;--muted:#6e6e73;--card:#fff;--line:#e5e5ea}
+@media (prefers-color-scheme:dark){:root{--bg:#111113;--fg:#f2f2f4;--muted:#9a9aa0;--card:#1c1c1f;--line:#2c2c30}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,"Segoe UI","PingFang SC","Noto Sans CJK SC",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:28px 16px 60px}h1{font-size:20px;margin:0 0 4px}.m{color:var(--muted);font-size:13px;margin:0 0 20px}
+video,img{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:var(--card)}figure{margin:0 0 28px}figcaption{color:var(--muted);font-size:13px;margin-top:8px}
+a{color:inherit}</style>
+<main><h1>#820 界面预览</h1><p class="m">commit 186e4d6 · <a href="https://github.com/yetone/magpie/pull/820">回到 PR</a> · 这个 diff 给界面加了两类保护：关闭有未保存改动的供应商/路由/资源库编辑器时先弹出应用内的「放弃修改」确认框；删除供应商、账号密钥、路由组、插件及其中间件选项、资源库条目等操作不再立即生效，而是先弹确认框（并统一了 .action-confirm 弹窗样式、对话框语义和焦点圈定）。此外导航项加上 aria-current，并在首屏之前由新的 layout.js/theme.js 应用模式、平台、主题与字号。</p>
+<figure><video src="preview.mp4" controls autoplay muted playsinline poster="poster.png"></video><figcaption>红线是鼠标走过的轨迹，红色圆环是一次点击；底部文字是这一步在做什么。空格暂停，← → 逐段查看。</figcaption></figure>
+<figure><img src="01-providers-list.png" alt="供应商页：沙盒里只有一个 DeepSeek"><figcaption>关闭有未保存改动的供应商编辑器 · 供应商页：沙盒里只有一个 DeepSeek</figcaption></figure>
+<figure><img src="02-editor-opened.png" alt="刚打开的编辑器，还没有改动"><figcaption>关闭有未保存改动的供应商编辑器 · 刚打开的编辑器，还没有改动</figcaption></figure>
+<figure><img src="03-editor-edited.png" alt="编辑器里的 ID 字段已被改动，尚未保存"><figcaption>关闭有未保存改动的供应商编辑器 · 编辑器里的 ID 字段已被改动，尚未保存</figcaption></figure>
+<figure><img src="04-discard-dialog-escape.png" alt="按 Esc 关闭已改动的编辑器：确认框浮在编辑器之上"><figcaption>关闭有未保存改动的供应商编辑器 · 按 Esc 关闭已改动的编辑器：确认框浮在编辑器之上</figcaption></figure>
+<figure><img src="05-editor-after-cancel.png" alt="「取消」之后，编辑器还开着，ID 字段里的改动还在"><figcaption>关闭有未保存改动的供应商编辑器 · 「取消」之后，编辑器还开着，ID 字段里的改动还在</figcaption></figure>
+<figure><img src="06-discard-dialog-cancel.png" alt="点「取消」时的确认框"><figcaption>关闭有未保存改动的供应商编辑器 · 点「取消」时的确认框</figcaption></figure>
+<figure><img src="07-editor-closed.png" alt="放弃改动之后关闭编辑器的供应商页"><figcaption>关闭有未保存改动的供应商编辑器 · 放弃改动之后关闭编辑器的供应商页</figcaption></figure>
+<figure><img src="08-editor-before-remove.png" alt="编辑器底部：保存、取消与移除"><figcaption>移除供应商先确认 · 编辑器底部：保存、取消与移除</figcaption></figure>
+<figure><img src="09-editor-bar.png" alt="编辑器底部一排：移除、再添加一个 DeepSeek、复制、取消、保存"><figcaption>移除供应商先确认 · 编辑器底部一排：移除、再添加一个 DeepSeek、复制、取消、保存</figcaption></figure>
+<figure><img src="10-editor-closed-clean.png" alt="未改动的编辑器关闭后的供应商页"><figcaption>移除供应商先确认 · 未改动的编辑器关闭后的供应商页</figcaption></figure>
+</main></html>

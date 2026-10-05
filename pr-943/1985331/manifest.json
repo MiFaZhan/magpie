@@ -1,0 +1,29 @@
+{
+  "summary": "本 PR 只改了后端校验：设置里的 Codex 自动审批模型在保存时改用 provider.Served() 判断，未知名或空名（如 fake/missing、fake/）会被拒绝，不再覆盖已保存的审批模型，也不再改动 Codex 的目录标签。界面元素与文案没有新增或改动，变化只体现在设置里那个选择器提交后的行为上。",
+  "scenes": [
+    {
+      "title": "Codex 自动审批模型的可选项",
+      "shots": [
+        {
+          "file": "01-codex-auto-review-row.png",
+          "caption": "设置 · 常规里的「Codex 自动审批模型」，当前为「由 Codex 决定」",
+          "width": 2492
+        },
+        {
+          "file": "02-codex-auto-review-options.png",
+          "caption": "展开后列出的可选模型",
+          "width": 2560
+        }
+      ]
+    }
+  ],
+  "video": "preview.mp4",
+  "poster": "poster.png",
+  "errors": [],
+  "leak": false,
+  "skipped": null,
+  "mismatch": "",
+  "unseen": "沙盒里只有 DeepSeek 一个供应商、没有任何订阅账号，而「Codex 自动审批模型」的选择器只会列出 magpie 实际提供的模型，界面上没有提交任意模型名的入口，因此「拒绝 fake/missing、fake/ 这类未知名，并保持已保存的审批模型和 Codex 目录标签不变」这一行为无法在画面里触发或复现，只能看到校验所依据的那份可选项列表。",
+  "interactive": true,
+  "pages": 2
+}
