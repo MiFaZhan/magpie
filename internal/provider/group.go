@@ -537,15 +537,18 @@ func membersIn(entries []Entry, all []Group, g Group) []Member {
 
 // groupEntries are the catalog's groups: each with a member ready, named
 // as the user named it, answering for its first member when an agent asks
-// what the model can do, and offering only the reasoning levels every
-// member has — but for those fixed at an effort of their own, which take
-// whatever the agent asks, and those whose levels nothing magpie reads
-// knows (levelsUnknown), which are sent it as asked, and those that think
-// with no levels to pick from, which are sent it as asked up to high
-// (the gateway's fitFor). With every member fixed, the group offers the
-// levels they are fixed at, so that an agent still asks it to reason.
-// A group that names its own levels (Group.Levels) offers those, and so
-// does a group in it for its models.
+// what the model can do, and reasoning when any member does — a member
+// that doesn't think doesn't take reasoning from the others, as a
+// text-only member doesn't take images (#756) — offering the reasoning
+// levels the members have in common, as before, but for those fixed at
+// an effort of their own, which take whatever the agent asks, and those
+// whose levels nothing magpie reads knows (levelsUnknown), which are
+// sent it as asked, and those that think with no levels to pick from,
+// which are sent it as asked up to high (the gateway's fitFor). With
+// every member fixed, the group offers the levels they are fixed at, so
+// that an agent still asks it to reason. A group that names its own
+// levels (Group.Levels) offers those, and so does a group in it for its
+// models.
 func groupEntries(entries []Entry) []Entry {
 	var out []Entry
 	all := groupsIn(entries)
@@ -557,7 +560,7 @@ func groupEntries(entries []Entry) []Entry {
 		if len(ms) == 0 {
 			continue
 		}
-		e := Entry{ID: GroupPrefix + g.ID, Model: ms[0].Model, Name: g.Name, Provider: ms[0].Provider, Group: g.ID, Named: !g.Auto, Reasoning: true}
+		e := Entry{ID: GroupPrefix + g.ID, Model: ms[0].Model, Name: g.Name, Provider: ms[0].Provider, Group: g.ID, Named: !g.Auto}
 		var fixed []string // the efforts members are fixed at
 		levelled := false  // a member that follows the agent's effort was met
 		// Codex's ultra (max, with Codex handing parts of the task to agents
@@ -583,7 +586,14 @@ func groupEntries(entries []Entry) []Entry {
 					unknown = levelsUnknown(x)
 				}
 			}
-			e.Reasoning = e.Reasoning && thinks
+			// it reasons when a member does: the gateway routes a request
+			// asking for reasoning to the members that take it, and one
+			// that doesn't think is no reason to tell the agent the group
+			// can't (#756's rule for images, applied to reasoning). Which
+			// levels the group offers is left as it was: a member known to
+			// take none still leaves the group none (#597), and the group
+			// is then Levelless, a shape magpie serves
+			e.Reasoning = e.Reasoning || thinks
 			// the reply agents are told is the longest a member gives: the
 			// gateway asks each member for no more than its own
 			// (withMaxOutput), so the members that write long replies aren't

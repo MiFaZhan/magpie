@@ -736,10 +736,13 @@ It exposes:
 | `/v1/models`, `/v1beta/models` | the catalog            |
 
 Each `/v1/models` entry includes `reasoning` and `supported_reasoning_levels`
-(`[{"effort":"low"}, ...]`). A routing group lists only the levels every
-member supports. `native_endpoints` (`["/v1/messages"]`) names the APIs a
-request for the model is passed straight through on; it is left out of a
-routing group, and of a model every request to which is translated anyway.
+(`[{"effort":"low"}, ...]`). A routing group is marked `reasoning` when any
+member thinks, even where it offers no levels to pick from (a member known
+to take none still leaves the group none); `supported_reasoning_levels`
+lists only the levels every member supports, as before. `native_endpoints`
+(`["/v1/messages"]`) names the APIs a request for the model is passed
+straight through on; it is left out of a routing group, and of a model every
+request to which is translated anyway.
 
 Requests pass straight through when the vendor speaks the agent's API and
 are translated otherwise, streaming, tool calls and reasoning included. The
