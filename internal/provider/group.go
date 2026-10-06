@@ -586,13 +586,15 @@ func groupEntries(entries []Entry) []Entry {
 					unknown = levelsUnknown(x)
 				}
 			}
-			// it reasons when a member does: the gateway routes a request
-			// asking for reasoning to the members that take it, and one
-			// that doesn't think is no reason to tell the agent the group
-			// can't (#756's rule for images, applied to reasoning). Which
-			// levels the group offers is left as it was: a member known to
-			// take none still leaves the group none (#597), and the group
-			// is then Levelless, a shape magpie serves
+			// it reasons when a member does: the gateway sends the
+			// effort to the members that take it, and a member known not
+			// to think is sent none of it, as a text-only member is sent
+			// no image (#756's rule for images, applied to reasoning).
+			// One that doesn't think is no reason to tell the agent the
+			// group can't. Which levels the group offers is left as it
+			// was: a member known to take none still leaves the group
+			// none (#597), and the group is then Levelless, a shape
+			// magpie serves
 			e.Reasoning = e.Reasoning || thinks
 			// the reply agents are told is the longest a member gives: the
 			// gateway asks each member for no more than its own
@@ -705,6 +707,18 @@ func levelsUnknown(x Entry) bool {
 		return false
 	}
 	return !catalog.Knows(x.Model)
+}
+
+// Quiet reports whether the model is known not to think: magpie has a
+// word on it — its vendor's or its maker's list, or its provider's own
+// account list — and that word says no reasoning. A model nothing speaks
+// for isn't quiet: the gateway sends it the effort the agent asked for,
+// as #597 leaves it. Nor is one that takes levels — a model that thinks,
+// or one the user gave levels of their own, which the gateway fits an
+// effort to. A group's member that is quiet is sent no reasoning ask,
+// which some vendors turn away with a 400 on a model that can't think.
+func (e Entry) Quiet() bool {
+	return !e.Reasoning && len(e.Efforts) == 0 && !levelsUnknown(e)
 }
 
 // SaveGroup adds or replaces a group of the user's. Changing one magpie
