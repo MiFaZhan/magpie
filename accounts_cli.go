@@ -468,6 +468,7 @@ func checkinWorkBuddy(asJSON bool) error {
 	defer cancel()
 	rs := append(provider.CheckInWorkBuddy(ctx), provider.CheckInTrae(ctx)...)
 	rs = append(rs, provider.CheckInMiniMax(ctx)...)
+	rs = append(rs, provider.CheckInZcode(ctx)...)
 	if rs == nil {
 		rs = []provider.WorkBuddyCheckin{}
 	}
@@ -488,6 +489,8 @@ func checkinWorkBuddy(asJSON bool) error {
 			r.User = "Trae CN " + r.User
 		case "minimax":
 			r.User = "MiniMax Code " + r.User
+		case "zcode":
+			r.User = "ZCode " + r.User
 		}
 		switch r.Outcome {
 		case provider.CheckinClaimed, provider.CheckinDone:
@@ -511,7 +514,7 @@ func checkinWorkBuddy(asJSON bool) error {
 		}
 	}
 	if !asJSON && len(rs) == 0 {
-		fmt.Println(muted.Render("no WorkBuddy (China), Trae CN or MiniMax Code account is signed in"))
+		fmt.Println(muted.Render("no WorkBuddy (China), Trae CN, MiniMax Code or ZCode account is signed in"))
 	}
 	if failed > 0 {
 		return fmt.Errorf("%d of %d accounts couldn't check in", failed, len(rs))
