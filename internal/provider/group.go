@@ -716,7 +716,9 @@ func levelsUnknown(x Entry) bool {
 // as #597 leaves it. Nor is one that takes levels — a model that thinks,
 // or one the user gave levels of their own, which the gateway fits an
 // effort to. A group's member that is quiet is sent no reasoning ask,
-// which some vendors turn away with a 400 on a model that can't think.
+// which some vendors turn away with a 400 on a model that can't think,
+// but for one the user fixed at an effort (Group's member syntax, #189):
+// the gateway leaves that alone, the user's word over magpie's.
 func (e Entry) Quiet() bool {
 	return !e.Reasoning && len(e.Efforts) == 0 && !levelsUnknown(e)
 }

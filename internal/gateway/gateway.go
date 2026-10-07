@@ -1605,8 +1605,11 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		// a member known not to think is sent no reasoning ask (#950): the
 		// group reasons for the members that do, and asking one that can't
 		// is what some vendors turn away with a 400. Every other field goes
-		// as the agent sent it, and which member goes first is unchanged
-		quiet := isGroup && quietTo(c.p.ID, c.model)
+		// as the agent sent it, and which member goes first is unchanged.
+		// One the user fixed at an effort is left as it is: that is the
+		// user saying this model does think, over a catalog that may be
+		// wrong about it (the Trae plugin's own model, #950)
+		quiet := isGroup && c.effort == "" && quietTo(c.p.ID, c.model)
 		if quiet {
 			attemptBody, picked = withoutReasoningAsk(from, attemptBody), false
 		}

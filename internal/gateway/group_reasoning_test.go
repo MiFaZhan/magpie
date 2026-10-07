@@ -191,9 +191,10 @@ func TestGroupNonThinkingMemberNoEffort(t *testing.T) {
 	if sent := quiet.sent(); sent["reasoning"] != nil || sent["reasoning_effort"] != nil {
 		t.Fatalf("D: the quiet member was sent %v", sent)
 	}
-	// E: a quiet member the user fixed at an effort is sent none of it
-	// either, and the trace keeps the fixed effort to say why it was asked
-	// for one — the ask is the member's to take, and this one can't
+	// E: a quiet member the user fixed at an effort is sent it: that is
+	// the user saying this model does think, over a catalog that may be
+	// wrong about it — which is what #950 was reported about — so magpie's
+	// word doesn't override theirs
 	if err := provider.SaveGroup(provider.Group{Name: "Fix", Members: []string{"thinks/levelled", "quiet/plain:high"}, Routing: provider.Ordered}); err != nil {
 		t.Fatal(err)
 	}
@@ -202,10 +203,10 @@ func TestGroupNonThinkingMemberNoEffort(t *testing.T) {
 	if code != 200 || !strings.Contains(out, "from kq") {
 		t.Fatalf("E: %d %s", code, out)
 	}
-	if sent := quiet.sent(); sent["reasoning_effort"] != nil || sent["reasoning"] != nil {
-		t.Fatalf("E: the quiet member was sent %v", sent)
+	if sent := quiet.sent(); sent["reasoning_effort"] != "high" {
+		t.Fatalf("E: the fixed member was sent %v", sent)
 	}
-	if r := lastRoute(s); len(r.Tries) != 2 || r.Tries[1].Fixed != "high" || r.Tries[1].Effort != "" {
+	if r := lastRoute(s); len(r.Tries) != 2 || r.Tries[1].Fixed != "high" || r.Tries[1].Effort != "high" {
 		t.Fatalf("E: traced %+v", r.Tries)
 	}
 }

@@ -13,7 +13,11 @@ package gateway
 // changed: the group routes as it did, and only the body changes. A model
 // nothing speaks for isn't touched — it is sent the effort the agent asked
 // for, as #597 leaves it — and neither is a request to a model of its own,
-// outside a group.
+// outside a group. Nor is a member the user fixed at an effort (candidate
+// effort, #189): that is the user saying this model does think, over a
+// catalog that may be wrong about it — the Trae plugin's own model, whose
+// plugin gave no capabilities, is what #950 was reported about — so the
+// user's word goes as it is, and magpie's default doesn't override it.
 
 import (
 	"bytes"
