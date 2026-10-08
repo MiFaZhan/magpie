@@ -1901,6 +1901,16 @@ control where it was on the screen. It runs in Chromium and WebKit, in
 English and Chinese:
 node --test internal/gui/tests/list-sort.test.cjs
 
+`quota-name-translated.test.cjs` holds the rule that a window's name is
+what magpie translates while its display is shown as it came (#1001): a
+plugin that puts its sentence in the display keeps the card English in
+every language, as the ZCode plugin's claim line did. The fixture is that
+line with its name a sentence magpie knows and a display of the plugin's
+own ("1 · ZCode Trust Build"); in English and Chinese, Chromium and
+WebKit, the name reads in the language and the count and plan name do
+not:
+node --test internal/gui/tests/quota-name-translated.test.cjs
+
 `quota-pools.test.cjs` checks Antigravity's allowance a row a pool of
 models, each with its 5-hour and its weekly window (a user on Discord: the
 three models read the same, show the 5 hours and the week left): windows
