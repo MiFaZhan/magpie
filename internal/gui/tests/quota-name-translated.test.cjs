@@ -93,9 +93,11 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
           const s = spans[spans.length - 1];
           const quota = s.closest(".quota").getBoundingClientRect();
           const name = s.getBoundingClientRect();
-          return { over: Math.round(name.right - quota.right), cut: s.scrollWidth > s.clientWidth + 1 };
+          // the name's own box against its .quota: an inline span's scrollWidth
+          // never exceeds its clientWidth, so geometry is what catches this
+          return { over: Math.round(name.right - quota.right), wider: name.width > quota.width };
         });
-        assert.ok(fit.over <= 0 && !fit.cut, `the name is cut off at ${width}px by ${fit.over}px (cut=${fit.cut})`);
+        assert.ok(fit.over <= 0 && !fit.wider, `the name is cut off at ${width}px: ${fit.over}px past its quota, wider=${fit.wider}`);
         await page.close();
       }
       assert.deepEqual(errors, []);
