@@ -6,11 +6,14 @@
 // Both narrow what the page's search already found, the field keeps its
 // focus and its node while the page is drawn again under it (npm's answer
 // comes while typing), nothing is left over at 440px, and a filter that
-// leaves nothing says so with a Show all. The repositories are the dev
-// instance's real /api/plugins/github answer of 2026-10-13 (31: 27
-// providers, 3 middleware, an agent); the API is faked and no request
-// leaves the page. English, Chinese, Traditional Chinese, Japanese and
-// German, 980px and 440px.
+// leaves nothing says so with a Show all. What's installed is the other
+// question the section is read with (the owner: 加一个未安装), so a second
+// strip beside the kinds picks it out, its counts following the kinds and
+// the field as they are picked, and the two narrow the grid together. The
+// repositories are the dev instance's real /api/plugins/github answer of
+// 2026-10-13 (31: 27 providers, 3 middleware, an agent); the API is faked
+// and no request leaves the page. English, Chinese, Traditional Chinese,
+// Japanese and German, 980px and 440px.
 const assert = require("node:assert/strict");
 const fs = require("node:fs/promises");
 const path = require("node:path");
@@ -19,6 +22,12 @@ const { chromium, webkit } = require("playwright");
 
 const assets = path.resolve(__dirname, "../assets");
 const GH = require("./fixtures/plugins-github-31.json");
+// two of them already here, a provider and a middleware, installed by the
+// spec the page would send for each: the strip says both sides of it, and
+// the kinds narrow it either way
+const INSTALLED = ["mu-zi-lee/magpie-our-free-model", "ezdemo/magpie-haiku55-thinking"]
+  .map((repo) => GH.repos.find((r) => r.repo === repo))
+  .map((r) => ({ spec: r.spec, package: r.package, providers: [], version: "1.0.0", moved: [] }));
 
 function server(lang, fetched) {
   return async (route) => {
@@ -30,7 +39,7 @@ function server(lang, fetched) {
     if (url.pathname === "/api/providers") return json({ providers: [], presets: [], excluded: [], gateway: { running: true, window: true }, plugins: [] });
     if (url.pathname === "/api/groups") return json({ groups: [], pools: [] });
     if (url.pathname === "/api/gateway/trace") return json({ routes: [] });
-    if (url.pathname === "/api/plugins") return json({ bun: true, bunVersion: "1.4.2", plugins: [], picker: false, movable: [] });
+    if (url.pathname === "/api/plugins") return json({ bun: true, bunVersion: "1.4.2", plugins: INSTALLED, picker: false, movable: [] });
     if (url.pathname === "/api/plugins/listings") return json({ listings: [{ package: "@magpie-community/opencode-zed-auth", name: "Zed", community: true }] });
     // npm answers late, while the field is being typed in: the page is drawn again under it
     if (url.pathname === "/api/plugins/npm") { await new Promise((r) => setTimeout(r, 1500)); return json({ npm: {} }); }
@@ -47,6 +56,9 @@ function server(lang, fetched) {
 const kindOf = (r) => r.kind === "middleware" ? "Middleware" : r.kind === "agent" ? "Agent" : "Provider";
 const names = (rs) => rs.map((r) => r.repo.split("/")[1]).sort();
 const has = (r, s) => [r.repo, r.owner, r.package || "", r.description || ""].join(" ").toLowerCase().includes(s.toLowerCase());
+// as the page tells them apart: the plugin store knows a repository by
+// whichever spec names it, and the fixture installs two of them
+const here = (r) => INSTALLED.some((e) => e.package === r.package);
 
 for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium", "webkit"])) {
   test(engine + ": the plugins on GitHub are narrowed by kind and by a field of their own", async (t) => {
@@ -68,12 +80,47 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
           await cards.first().waitFor();
           assert.equal(await cards.count(), 31);
           const tr = (s) => page.evaluate((s) => t(s), s);
-          if (lang !== "en") for (const s of ["Kind of plugin", "Filter by name, author or description", "Filter the plugins on GitHub", "No plugin on GitHub matches"]) assert.notEqual(await tr(s), s, `${s} in ${lang}`);
+          if (lang !== "en") for (const s of ["Kind of plugin", "Installed or not", "Not installed", "Filter by name, author or description", "Filter the plugins on GitHub", "No plugin on GitHub matches"]) assert.notEqual(await tr(s), s, `${s} in ${lang}`);
           const want = async (rs) => [await tr("All") + " · " + rs.length, ...(await Promise.all(["Provider", "Middleware", "Agent"].map(async (k) => (await tr(k)) + " · " + rs.filter((r) => kindOf(r) === k).length)))];
           const kinds = sec.locator(".pm-ghkinds .opt");
           assert.deepEqual(await kinds.allTextContents(), await want(GH.repos));
+          // and beside them what's installed, over the very repositories:
+          // two of them, a provider and a middleware, are already here
+          const have = sec.locator(".pm-ghhave .opt");
+          const wantHave = async (rs) => [await tr("All") + " · " + rs.length, await tr("Installed") + " · " + rs.filter(here).length, await tr("Not installed") + " · " + rs.filter((r) => !here(r)).length];
+          assert.deepEqual(await have.allTextContents(), await wantHave(GH.repos));
+          assert.equal(await sec.locator(".pm-ghhave .opt.on").textContent(), (await wantHave(GH.repos))[0]);
           const field = sec.locator(".pm-ghfind input");
           assert.equal(await field.getAttribute("placeholder"), await tr("Filter by name, author or description"));
+
+          // not installed: the 29 nobody has, both strips counting the
+          // other as it is picked
+          await have.nth(2).click();
+          assert.equal(await cards.count(), GH.repos.filter((r) => !here(r)).length);
+          assert.equal(await cards.locator(".pm-act.done").count(), 0);
+          assert.deepEqual(await kinds.allTextContents(), await want(GH.repos.filter((r) => !here(r))));
+          // a kind on top of it: the middleware nobody has, its own kind
+          // strip counting what's left of it
+          await kinds.nth(2).click();
+          assert.equal(await cards.count(), GH.repos.filter((r) => kindOf(r) === "Middleware" && !here(r)).length);
+          assert.deepEqual(await have.allTextContents(), await wantHave(GH.repos.filter((r) => kindOf(r) === "Middleware")));
+          // installed: the two here, the middleware among them
+          await have.nth(1).click();
+          assert.equal(await cards.count(), 1);
+          assert.deepEqual(await cards.locator(".pm-name b").allInnerTexts(), ["magpie-haiku55-thinking"]);
+          // the field narrows both strips' counts, as it does the kinds'
+          await field.fill("doubao");
+          const doubao0 = GH.repos.filter((r) => has(r, "doubao"));
+          assert.deepEqual(await have.allTextContents(), await wantHave(doubao0.filter((r) => kindOf(r) === "Middleware")));
+          assert.equal(await cards.count(), 0);
+          const none0 = sec.locator(".pm-ghnone");
+          assert.equal((await none0.locator("span").textContent()).trim(), await tr("No plugin on GitHub matches"));
+          // Show all puts back both strips and the field
+          await none0.locator("button").click();
+          assert.equal(await field.inputValue(), "");
+          assert.equal(await cards.count(), GH.repos.length);
+          assert.equal(await sec.locator(".pm-ghhave .opt.on").textContent(), (await wantHave(GH.repos))[0]);
+          assert.equal(await sec.locator(".pm-ghkinds .opt.on").textContent(), (await want(GH.repos))[0]);
 
           // a kind: its cards alone, each saying so
           await kinds.nth(2).click();

@@ -567,9 +567,16 @@
   // more than a few to look through (counted before the page's search, so
   // they don't go away under someone typing). Both narrow what the page's
   // search has already found; only the section is drawn again.
+  // What's installed is the other question the section is read with (the
+  // owner: 加一个未安装), and it cuts across the kinds: a reader after a
+  // middleware they haven't got picks Middleware and Not installed. So it
+  // is a second strip beside the kinds, each counting what the other, the
+  // field and the page's search leave — the counts follow the picks as
+  // they are made — and the two narrow the grid together.
   // The section, its head and its field are made once and kept in the
   // page, as the page's search field is (#1055).
   let ghKind = "";       // "" (all) | "pv" | "mw" | "ag"
+  let ghHave = "";       // "" (all) | "have" | "none"
   let ghQuery = "";
   let ghList = [];       // what the page's search left of the repositories
   const ghSec = el("section", "pm-sec pm-ghsec");
@@ -606,21 +613,34 @@
     const found = ghList.filter(ghMatch);
     const kinds = ["pv", "mw", "ag"].filter((k) => ghList.some((l) => kindOf(l) === k));
     if (!kinds.includes(ghKind)) ghKind = "";
-    const n = (k) => found.filter((l) => !k || kindOf(l) === k).length;
+    // which of them are here, asked once each: the counts below would ask
+    // it again for every pick in both strips
+    const here = new Map(found.map((l) => [l, !!entryOf(l.package)]));
+    const have = (l) => here.get(l);
+    // the field and the other strip narrow it, so each count is what a
+    // pick in this strip would leave; the kind's own pick is the one left
+    // out, or every count but All would be the picked kind's alone
+    const n = (k, h) => found.filter((l) => (!k || kindOf(l) === k) && (!h || have(l) === (h === "have"))).length;
     const bar = [];
     if (kinds.length > 1) {
-      const pick = segs([["", t("All") + " · " + n("")], ...kinds.map((k) => [k, t(KINDS[k][1]) + " · " + n(k)])], ghKind, (k) => { ghKind = k; drawGh(); });
+      const pick = segs([["", t("All") + " · " + n("", ghHave)], ...kinds.map((k) => [k, t(KINDS[k][1]) + " · " + n(k, ghHave)])], ghKind, (k) => { ghKind = k; drawGh(); });
       pick.classList.add("pm-ghkinds");
       pick.setAttribute("role", "group");
       pick.setAttribute("aria-label", t("Kind of plugin"));
       bar.push(pick);
     }
-    bar.push(el("span", "grow"), ghFind);
+    // what's installed, on both sides of it, wherever the plugins come
+    // from: a reader looks for what to add as much as for what they have
+    const pick = segs([["", t("All") + " · " + n(ghKind, "")], ["have", t("Installed") + " · " + n(ghKind, "have")], ["none", t("Not installed") + " · " + n(ghKind, "none")]], ghHave, (h) => { ghHave = h; drawGh(); });
+    pick.classList.add("pm-ghhave");
+    pick.setAttribute("role", "group");
+    pick.setAttribute("aria-label", t("Installed or not"));
+    bar.push(pick, el("span", "grow"), ghFind);
     ghQ.placeholder = t("Filter by name, author or description");
     ghQ.setAttribute("aria-label", t("Filter the plugins on GitHub"));
     if (ghQ.value !== ghQuery) ghQ.value = ghQuery;
     replaceKeeping(ghBar, bar);
-    const shown = found.filter((l) => !ghKind || kindOf(l) === ghKind);
+    const shown = found.filter((l) => (!ghKind || kindOf(l) === ghKind) && (!ghHave || have(l) === (ghHave === "have")));
     if (shown.length) {
       ghGrid.replaceChildren(...shown.map(card));
       replaceKeeping(ghSec, [ghHead, ghBar, ghGrid]);
@@ -629,7 +649,7 @@
     const none = el("div", "pm-ghnone");
     const all = el("button", "text", t("Show all"));
     all.type = "button";
-    all.onclick = () => { ghKind = ""; ghQuery = ""; drawGh(); ghQ.focus(); };
+    all.onclick = () => { ghKind = ""; ghHave = ""; ghQuery = ""; drawGh(); ghQ.focus(); };
     none.append(el("span", "", t("No plugin on GitHub matches")), all);
     replaceKeeping(ghSec, [ghHead, ghBar, none]);
   }
