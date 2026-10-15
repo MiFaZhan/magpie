@@ -570,9 +570,10 @@
   // What's installed is the other question the section is read with (the
   // owner: 加一个未安装), and it cuts across the kinds: a reader after a
   // middleware they haven't got picks Middleware and Not installed. So it
-  // is a second strip beside the kinds, each counting what the other, the
-  // field and the page's search leave — the counts follow the picks as
-  // they are made — and the two narrow the grid together.
+  // is a second strip, at the bar's other end beside the field, each
+  // counting what the other, the field and the page's search leave — the
+  // counts follow the picks as they are made — and the two narrow the
+  // grid together.
   // The section, its head and its field are made once and kept in the
   // page, as the page's search field is (#1055).
   let ghKind = "";       // "" (all) | "pv" | "mw" | "ag"
@@ -630,12 +631,16 @@
       bar.push(pick);
     }
     // what's installed, on both sides of it, wherever the plugins come
-    // from: a reader looks for what to add as much as for what they have
+    // from: a reader looks for what to add as much as for what they have.
+    // It stands at the other end of the bar, beside the field, rather than
+    // under the kinds: the kinds say what a plugin is, this says whether
+    // the reader already has it, and reading them as one run of picks made
+    // the section look like it had four kinds
     const pick = segs([["", t("All") + " · " + n(ghKind, "")], ["have", t("Installed") + " · " + n(ghKind, "have")], ["none", t("Not installed") + " · " + n(ghKind, "none")]], ghHave, (h) => { ghHave = h; drawGh(); });
     pick.classList.add("pm-ghhave");
     pick.setAttribute("role", "group");
     pick.setAttribute("aria-label", t("Installed or not"));
-    bar.push(pick, el("span", "grow"), ghFind);
+    bar.push(el("span", "grow"), pick, ghFind);
     ghQ.placeholder = t("Filter by name, author or description");
     ghQ.setAttribute("aria-label", t("Filter the plugins on GitHub"));
     if (ghQ.value !== ghQuery) ghQ.value = ghQuery;
